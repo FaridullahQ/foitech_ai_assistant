@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="odoo_ai_default_provider" model="ir.config_parameter">
+            <field name="key">odoo_ai.provider</field>
+            <field name="value">groq</field>
+        </record>
+        <record id="odoo_ai_default_openai_model" model="ir.config_parameter">
+            <field name="key">odoo_ai.openai_model</field>
+            <field name="value">gpt-4o-mini</field>
+        </record>
+        <record id="odoo_ai_default_claude_model" model="ir.config_parameter">
+            <field name="key">odoo_ai.claude_model</field>
+            <field name="value">claude-sonnet-4-20250514</field>
+        </record>
+        <record id="odoo_ai_default_gemini_model" model="ir.config_parameter">
+            <field name="key">odoo_ai.gemini_model</field>
+            <field name="value">gemini-1.5-flash</field>
+        </record>
+        <record id="odoo_ai_default_groq_model" model="ir.config_parameter">
+            <field name="key">odoo_ai.groq_model</field>
+            <field name="value">llama-3.1-8b-instant</field>
+        </record>
+    </data>
+</odoo>

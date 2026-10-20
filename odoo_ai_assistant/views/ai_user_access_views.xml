@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ── List View ─────────────────────────────────────────────── -->
+    <record id="view_odoo_ai_user_access_list" model="ir.ui.view">
+        <field name="name">odoo.ai.user.access.list</field>
+        <field name="model">odoo.ai.user.access</field>
+        <field name="arch" type="xml">
+            <tree string="AI Assistant User Access" editable="top">
+                <field name="user_id" string="User"/>
+                <field name="is_super_user" string="AI Super User"
+                       widget="boolean_toggle"/>
+                <field name="allowed_module_ids" string="Allowed Modules"
+                       widget="many2many_tags"
+                       invisible="is_super_user"/>
+                <field name="note" string="Note"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- ── Form View ─────────────────────────────────────────────── -->
+    <record id="view_odoo_ai_user_access_form" model="ir.ui.view">
+        <field name="name">odoo.ai.user.access.form</field>
+        <field name="model">odoo.ai.user.access</field>
+        <field name="arch" type="xml">
+            <form string="AI Assistant User Access">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="user_id" placeholder="Select User..."/>
+                        </h1>
+                    </div>
+
+                    <group>
+                        <group>
+                            <field name="is_super_user"
+                                   string="AI Super User"
+                                   widget="boolean_toggle"/>
+                            <field name="note" string="Note"
+                                   placeholder="Optional description..."/>
+                        </group>
+                        <group>
+                            <div invisible="not is_super_user"
+                                 class="alert alert-success" role="alert"
+                                 style="margin-top:8px;">
+                                <strong>&#10003; Super User Active</strong> — This user
+                                has unrestricted access to all modules in the AI Assistant.
+                                The allowed modules list below is ignored.
+                            </div>
+                        </group>
+                    </group>
+
+                    <notebook>
+                        <page string="Allowed Modules" name="allowed_modules">
+                            <div class="alert alert-warning" role="alert"
+                                 invisible="not is_super_user">
+                                <strong>Note:</strong> This user is an AI Super User.
+                                The module selections below are saved but not enforced.
+                            </div>
+                            <div class="alert alert-info" role="alert"
+                                 invisible="is_super_user">
+                                <strong>How it works:</strong>
+                                Select the modules this user can query via AI Assistant.
+                                If <em>no rule</em> exists for a user they have
+                                <strong>full access by default</strong>.
+                                Odoo Administrators always have full access regardless.
+                            </div>
+                            <field name="allowed_module_ids"
+                                   widget="many2many_checkboxes"
+                                   domain="[('state','=','installed')]"
+                                   string="Installed Modules"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ── Action ────────────────────────────────────────────────── -->
+    <record id="action_odoo_ai_user_access" model="ir.actions.act_window">
+        <field name="name">User Module Access</field>
+        <field name="res_model">odoo.ai.user.access</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No access rules defined yet
+            </p>
+            <p>
+                By default all users can query all modules.<br/>
+                Create a rule to restrict modules or grant AI Super User access.
+            </p>
+        </field>
+    </record>
+
+</odoo>

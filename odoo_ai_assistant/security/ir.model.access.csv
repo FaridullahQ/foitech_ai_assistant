@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_odoo_ai_chat_history_user,odoo.ai.chat.history.user,model_odoo_ai_chat_history,base.group_user,1,1,1,0
+access_odoo_ai_chat_history_manager,odoo.ai.chat.history.manager,model_odoo_ai_chat_history,base.group_system,1,1,1,1
+access_odoo_ai_user_access_manager,odoo.ai.user.access.manager,model_odoo_ai_user_access,base.group_system,1,1,1,1
+access_odoo_ai_user_access_user,odoo.ai.user.access.user,model_odoo_ai_user_access,base.group_user,1,0,0,0

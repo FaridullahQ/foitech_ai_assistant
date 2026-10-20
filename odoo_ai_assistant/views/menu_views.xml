@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Top level menu (visible only to admins in the app list) -->
+    <menuitem id="menu_odoo_ai_root"
+              name="AI Assistant"
+              sequence="100"
+              groups="base.group_system"/>
+
+    <menuitem id="menu_odoo_ai_chat_history"
+              name="Chat History"
+              parent="menu_odoo_ai_root"
+              action="action_odoo_ai_chat_history"
+              sequence="10"/>
+
+    <menuitem id="menu_odoo_ai_user_access"
+              name="User Module Access"
+              parent="menu_odoo_ai_root"
+              action="action_odoo_ai_user_access"
+              sequence="20"
+              groups="base.group_system"/>
+</odoo>
