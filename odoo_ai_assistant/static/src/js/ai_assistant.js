@@ -92,12 +92,24 @@ async function loadChartJs() {
     if (chartJsLoaded || window.Chart) { chartJsLoaded = true; return; }
     await new Promise((resolve, reject) => {
         const s = document.createElement('script');
-        s.src = 'https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js';
+        s.src = '/odoo_ai_assistant/static/lib/chartjs/chart.umd.js';
         s.onload = resolve; s.onerror = reject;
         document.head.appendChild(s);
     });
     chartJsLoaded = true;
 }
+
+// ─── Module information (shown in the About panel) ──────────────────────────
+const MODULE_INFO = {
+    name: "Odoo AI Assistant",
+    version: "17.0.1.0.4",
+    developer: "Faridullah Qaderi",
+    email: "Faridullahqaderi54@gmail.com",
+    phone: "(+93) 788 70 74 79",
+    phoneRaw: "+93788707479",
+    whatsapp: "https://wa.me/93788707479",
+    company: "FOITECH-Digital Solutions",
+};
 
 // ─── Suggestion pills ───────────────────────────────────────────────────────
 const SUGGESTIONS = [
@@ -133,6 +145,7 @@ export class AIAssistant extends Component {
             providerLabel: "OpenAI",
             minimized: false,
             showSuggestions: true,
+            showAbout: false,
         });
 
         this.chartInstances = {};
@@ -150,7 +163,7 @@ export class AIAssistant extends Component {
     async _loadSettings() {
         try {
             const settings = await this.rpc("/odoo_ai/settings", {});
-            const labels = { openai: "OpenAI", claude: "Claude", gemini: "Gemini" };
+            const labels = { openai: "OpenAI", claude: "Claude", gemini: "Gemini", groq: "Groq", local: "Local model" };
             this.state.provider = settings.provider;
             this.state.providerLabel = labels[settings.provider] || settings.provider;
         } catch (e) {
@@ -163,10 +176,13 @@ export class AIAssistant extends Component {
     toggleOpen() {
         this.state.open = !this.state.open;
         this.state.minimized = false;
+        this.state.showAbout = false;
         if (this.state.open && this.state.messages.length === 0) {
             this.state.showSuggestions = true;
         }
     }
+
+    toggleAbout() { this.state.showAbout = !this.state.showAbout; }
 
     minimize() { this.state.minimized = true; }
     restore()  { this.state.minimized = false; }
@@ -256,8 +272,15 @@ export class AIAssistant extends Component {
             this.chartInstances[canvasId].destroy();
         }
 
+        // First colour follows the active Odoo theme (Bootstrap primary)
+        let primary = "";
+        try {
+            primary = getComputedStyle(document.documentElement)
+                .getPropertyValue("--bs-primary").trim();
+        } catch (e) { /* ignore */ }
+        if (!/^#[0-9a-f]{6}$/i.test(primary)) { primary = '#22d3ee'; }
         const colors = [
-            '#6366f1','#22d3ee','#f59e0b','#10b981','#f43f5e',
+            primary,'#22d3ee','#f59e0b','#10b981','#f43f5e',
             '#8b5cf6','#14b8a6','#fb923c','#84cc16','#e879f9',
         ];
         const bgColors = colors.map(c => c + 'cc');
@@ -281,13 +304,13 @@ export class AIAssistant extends Component {
                 plugins: {
                     legend: {
                         display: chartData.type === 'pie',
-                        labels: { color: '#e2e8f0', font: { size: 11 } },
+                        labels: { color: 'rgba(241,245,255,0.85)', font: { size: 11 } },
                     },
                     tooltip: { callbacks: { label: ctx => ` ${ctx.formattedValue}` } },
                 },
                 scales: chartData.type === 'pie' ? {} : {
-                    x: { ticks: { color: '#94a3b8' }, grid: { color: '#1e293b' } },
-                    y: { ticks: { color: '#94a3b8' }, grid: { color: '#1e293b' } },
+                    x: { ticks: { color: 'rgba(226,232,240,0.7)' }, grid: { color: 'rgba(255,255,255,0.08)' } },
+                    y: { ticks: { color: 'rgba(226,232,240,0.7)' }, grid: { color: 'rgba(255,255,255,0.08)' } },
                 },
             },
         };
@@ -348,6 +371,7 @@ export class AIAssistant extends Component {
     }
 
     get suggestions() { return SUGGESTIONS; }
+    get about() { return MODULE_INFO; }
 }
 
 AIAssistant.template = "odoo_ai_assistant.AIAssistant";

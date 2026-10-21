@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+# Odoo AI Assistant — developed by Faridullah Qaderi (Faridullahqaderi54@gmail.com)
+# Powered by FOITECH-Digital Solutions
 import json
 import logging
 import re
@@ -11,6 +13,8 @@ from datetime import datetime, date
 from odoo import http
 from odoo.http import request
 from odoo.exceptions import AccessError
+
+from .. import local_llm
 
 _logger = logging.getLogger(__name__)
 
@@ -93,37 +97,52 @@ def _rank_models(tokens, rows, limit=8):
 # ─────────────────────────────────────────────
 
 class AIProviderBase:
+    # Prompt-size hints (smaller local models override these)
+    schema_chars = 14000
+    max_models = 8
+
     def __init__(self, api_key, model):
         self.api_key = api_key
         self.model = model
 
-    def chat(self, system_prompt, messages):
+    def chat(self, system_prompt, messages, json_mode=False):
         raise NotImplementedError
 
 
 class OpenAIProvider(AIProviderBase):
-    DEFAULT_MODEL = 'gpt-4o-mini'
+    DEFAULT_MODEL = 'gpt-5-mini'
 
-    def chat(self, system_prompt, messages):
+    @staticmethod
+    def _is_reasoning_model(model):
+        """GPT-5 and o-series models reject max_tokens / temperature."""
+        return bool(re.match(r'^(gpt-5|o\d)', model or ''))
+
+    def chat(self, system_prompt, messages, json_mode=False):
         url = 'https://api.openai.com/v1/chat/completions'
         headers = {
             'Authorization': f'Bearer {self.api_key}',
             'Content-Type': 'application/json',
         }
+        model = self.model or self.DEFAULT_MODEL
         payload = {
-            'model': self.model or self.DEFAULT_MODEL,
+            'model': model,
             'messages': [{'role': 'system', 'content': system_prompt}] + messages,
-            'max_tokens': 1500,
-            'temperature': 0.2,
         }
+        if self._is_reasoning_model(model):
+            # Reasoning tokens count against the limit, so leave generous room
+            payload['max_completion_tokens'] = 4096
+            payload['reasoning_effort'] = 'low'
+        else:
+            payload['max_tokens'] = 1500
+            payload['temperature'] = 0.2
         resp = _post_json('openai', url, payload, headers)
         return resp.json()['choices'][0]['message']['content']
 
 
 class ClaudeProvider(AIProviderBase):
-    DEFAULT_MODEL = 'claude-sonnet-4-20250514'
+    DEFAULT_MODEL = 'claude-sonnet-5-5'
 
-    def chat(self, system_prompt, messages):
+    def chat(self, system_prompt, messages, json_mode=False):
         url = 'https://api.anthropic.com/v1/messages'
         headers = {
             'x-api-key': self.api_key,
@@ -141,12 +160,12 @@ class ClaudeProvider(AIProviderBase):
 
 
 class GeminiProvider(AIProviderBase):
-    DEFAULT_MODEL = 'gemini-1.5-flash'
+    DEFAULT_MODEL = 'gemini-flash-latest'
 
-    def chat(self, system_prompt, messages):
+    def chat(self, system_prompt, messages, json_mode=False):
         model = self.model or self.DEFAULT_MODEL
-        url = f'https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={self.api_key}'
-        headers = {'Content-Type': 'application/json'}
+        url = f'https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent'
+        headers = {'Content-Type': 'application/json', 'x-goog-api-key': self.api_key}
 
         # Gemini uses a different message format
         contents = []
@@ -221,7 +240,7 @@ class GroqProvider(AIProviderBase):
         except ValueError:
             return None
 
-    def chat(self, system_prompt, messages):
+    def chat(self, system_prompt, messages, json_mode=False):
         url = f'{self.BASE_URL}/chat/completions'
         configured = self.model or self.DEFAULT_MODEL
         cache_key = (self.api_key[-8:], configured)
@@ -255,11 +274,75 @@ class GroqProvider(AIProviderBase):
         return content
 
 
+class LocalProvider(AIProviderBase):
+    """Self-hosted models. Server type 'ollama' uses Ollama's native /api/chat
+    (which honours the context size per request); 'openai' targets any
+    OpenAI-compatible server (LM Studio, vLLM, llama.cpp server, LocalAI)."""
+
+    def __init__(self, api_key, model, base_url=None, server_type='ollama',
+                 num_ctx=16384, timeout=180):
+        super().__init__(api_key, model)
+        self.server_type = server_type if server_type in local_llm.SERVER_TYPES else 'ollama'
+        self.base_url = local_llm.normalize_local_url(
+            base_url or 'http://localhost:11434', self.server_type)
+        self.num_ctx = max(2048, int(num_ctx or 16384))
+        self.timeout = max(10, int(timeout or 180))
+        # ~3 characters per token; keep ~4000 tokens for rules, history and answer
+        self.schema_chars = max(3000, min(14000, (self.num_ctx - 4000) * 3))
+        self.max_models = 8 if self.num_ctx >= 12000 else 4
+
+    def _post(self, url, payload):
+        headers = local_llm.local_headers(self.api_key)
+        resp = requests.post(url, json=payload, headers=headers, timeout=self.timeout)
+        if not resp.ok and resp.status_code == 400 and 'response_format' in payload:
+            # Some servers do not support JSON mode: retry once without it
+            payload = {k: v for k, v in payload.items() if k != 'response_format'}
+            resp = requests.post(url, json=payload, headers=headers, timeout=self.timeout)
+        if not resp.ok:
+            _logger.error('AI provider local returned HTTP %s: %s',
+                          resp.status_code, resp.text[:500])
+        resp.raise_for_status()
+        return resp
+
+    def chat(self, system_prompt, messages, json_mode=False):
+        msgs = [{'role': 'system', 'content': system_prompt}] + messages
+        _logger.info('Local model request: server=%s model=%s ctx=%s system_chars=%d message_chars=%d',
+                     self.server_type, self.model, self.num_ctx, len(system_prompt),
+                     sum(len(str(m.get('content', ''))) for m in messages))
+        if self.server_type == 'ollama':
+            payload = {
+                'model': self.model,
+                'messages': msgs,
+                'stream': False,
+                'keep_alive': '30m',
+                'options': {'num_ctx': self.num_ctx, 'num_predict': 2048, 'temperature': 0.1},
+            }
+            if json_mode:
+                payload['format'] = 'json'
+            data = self._post('%s/api/chat' % self.base_url, payload).json()
+            content = (data.get('message') or {}).get('content') or ''
+        else:
+            payload = {
+                'model': self.model,
+                'messages': msgs,
+                'stream': False,
+                'temperature': 0.1,
+                'max_tokens': 2048,
+            }
+            if json_mode:
+                payload['response_format'] = {'type': 'json_object'}
+            data = self._post('%s/chat/completions' % self.base_url, payload).json()
+            content = data['choices'][0]['message'].get('content') or ''
+        # Some reasoning models inline their thoughts
+        return re.sub(r'<think>.*?</think>', '', content, flags=re.S).strip()
+
+
 PROVIDER_MAP = {
     'openai': OpenAIProvider,
     'claude': ClaudeProvider,
     'gemini': GeminiProvider,
     'groq': GroqProvider,
+    'local': LocalProvider,
 }
 
 
@@ -343,7 +426,7 @@ class AIAssistantController(http.Controller):
             }
 
         except requests.exceptions.ConnectionError:
-            return {'success': False, 'answer': '⚠️ Could not connect to the AI provider. Please check your internet connection and API key in Settings.'}
+            return {'success': False, 'answer': '⚠️ Could not reach the AI server. Check your internet connection and API key, or, for a local model, make sure Ollama is running and the server URL in Settings → AI Assistant is correct.'}
         except requests.exceptions.HTTPError as e:
             resp = e.response
             status = resp.status_code if resp is not None else 'unknown'
@@ -357,6 +440,8 @@ class AIAssistantController(http.Controller):
             if status == 404 or 'model_not_found' in body:
                 return {'success': False, 'answer': '⚠️ The selected AI model is not available for your API key. Please choose another model in Settings → AI Assistant.'}
             return {'success': False, 'answer': f'⚠️ AI provider returned an error (HTTP {status}). Please try again.'}
+        except requests.exceptions.Timeout:
+            return {'success': False, 'answer': '⚠️ The AI server took too long to answer. For a local model, increase the timeout in Settings, use a smaller model, or ask a simpler question.'}
         except AccessError:
             return {'success': False, 'answer': '⚠️ You do not have permission to access this data.'}
         except json.JSONDecodeError:
@@ -389,10 +474,11 @@ class AIAssistantController(http.Controller):
         ICP = request.env['ir.config_parameter'].sudo()
         return {
             'provider': ICP.get_param('odoo_ai.provider', 'openai'),
-            'openai_model': ICP.get_param('odoo_ai.openai_model', 'gpt-4o-mini'),
-            'claude_model': ICP.get_param('odoo_ai.claude_model', 'claude-sonnet-4-20250514'),
-            'gemini_model': ICP.get_param('odoo_ai.gemini_model', 'gemini-1.5-flash'),
+            'openai_model': ICP.get_param('odoo_ai.openai_model', 'gpt-5-mini'),
+            'claude_model': ICP.get_param('odoo_ai.claude_model', 'claude-sonnet-5-5'),
+            'gemini_model': ICP.get_param('odoo_ai.gemini_model', 'gemini-flash-latest'),
             'groq_model': ICP.get_param('odoo_ai.groq_model', 'llama-3.1-8b-instant'),
+            'local_model': ICP.get_param('odoo_ai.local_model', ''),
             'has_openai_key': bool(ICP.get_param('odoo_ai.openai_api_key')),
             'has_claude_key': bool(ICP.get_param('odoo_ai.claude_api_key')),
             'has_gemini_key': bool(ICP.get_param('odoo_ai.gemini_api_key')),
@@ -411,11 +497,33 @@ class AIAssistantController(http.Controller):
             'groq':   'odoo_ai.groq_api_key',
         }
         model_map = {
-            'openai': ICP.get_param('odoo_ai.openai_model', 'gpt-4o-mini'),
-            'claude': ICP.get_param('odoo_ai.claude_model', 'claude-sonnet-4-20250514'),
-            'gemini': ICP.get_param('odoo_ai.gemini_model', 'gemini-1.5-flash'),
+            'openai': ICP.get_param('odoo_ai.openai_model', 'gpt-5-mini'),
+            'claude': ICP.get_param('odoo_ai.claude_model', 'claude-sonnet-5-5'),
+            'gemini': ICP.get_param('odoo_ai.gemini_model', 'gemini-flash-latest'),
             'groq':   ICP.get_param('odoo_ai.groq_model', 'llama-3.1-8b-instant'),
         }
+        if provider_name == 'local':
+            model = (ICP.get_param('odoo_ai.local_model') or '').strip()
+            if not model:
+                raise ValueError(
+                    'No local model configured. In Settings -> AI Assistant, enter the '
+                    'model name exactly as shown by "ollama list".'
+                )
+
+            def _int_param(key, default):
+                try:
+                    return int(ICP.get_param(key) or default)
+                except (TypeError, ValueError):
+                    return default
+
+            return LocalProvider(
+                api_key=ICP.get_param('odoo_ai.local_api_key', ''),
+                model=model,
+                base_url=ICP.get_param('odoo_ai.local_url', 'http://localhost:11434'),
+                server_type=ICP.get_param('odoo_ai.local_type', 'ollama'),
+                num_ctx=_int_param('odoo_ai.local_ctx', 16384),
+                timeout=_int_param('odoo_ai.local_timeout', 180),
+            )
         api_key = ICP.get_param(key_map.get(provider_name, 'odoo_ai.openai_api_key'), '')
         if not api_key:
             raise ValueError(
@@ -472,15 +580,16 @@ class AIAssistantController(http.Controller):
                 text += ' ' + str(h.get('content', ''))
 
         valid_names = {r['model'] for r in rows}
+        max_models = getattr(provider, 'max_models', 8)
         chosen = [m for m in (force_models or []) if m in valid_names]
         if not chosen:
-            chosen = _rank_models(_prompt_tokens(text), rows, limit=8)
+            chosen = _rank_models(_prompt_tokens(text), rows, limit=max_models)
         if not chosen and provider is not None:
             chosen = self._select_models_with_llm(provider, prompt, rows)
         if not chosen:
             names = {r['model'] for r in rows}
-            chosen = [m for m in self._COMMON_MODELS if m in names][:8] or \
-                     [r['model'] for r in rows[:8]]
+            chosen = [m for m in self._COMMON_MODELS if m in names][:max_models] or \
+                     [r['model'] for r in rows[:max_models]]
         _logger.info('AI schema models selected: %s', chosen)
 
         by_name = {r['model']: r for r in rows}
@@ -526,7 +635,8 @@ class AIAssistantController(http.Controller):
                     'name': by_name.get(model, {}).get('name', model),
                     'fields': strings,
                 })
-            if len(json.dumps(schema, default=_json_serializer)) <= self.MAX_SCHEMA_CHARS:
+            if len(json.dumps(schema, default=_json_serializer)) <= getattr(
+                    provider, 'schema_chars', self.MAX_SCHEMA_CHARS):
                 break
         return schema
 
@@ -546,7 +656,7 @@ class AIAssistantController(http.Controller):
             m = re.search(r'\[.*?\]', raw, re.S)
             names = json.loads(m.group(0)) if m else []
             valid = {r['model'] for r in rows}
-            return [n for n in names if isinstance(n, str) and n in valid][:6]
+            return [n for n in names if isinstance(n, str) and n in valid][:getattr(provider, 'max_models', 6)]
         except Exception as e:
             _logger.warning('AI model pre-selection failed: %s', e)
             return []
@@ -613,11 +723,31 @@ Available Odoo models and fields (each field is "name:type:Label"):
 - Keep limit to 20 by default, max 50
 """
         messages = history[-6:] + [{'role': 'user', 'content': prompt}]
-        raw = provider.chat(system_prompt, messages)
-        clean = raw.strip().lstrip('`').rstrip('`')
-        if clean.startswith('json'):
-            clean = clean[4:]
-        return json.loads(clean.strip())
+        raw = provider.chat(system_prompt, messages, json_mode=True)
+        try:
+            return self._parse_plan(raw)
+        except json.JSONDecodeError:
+            _logger.warning('AI plan was not valid JSON, retrying once: %s', (raw or '')[:300])
+            retry = messages + [
+                {'role': 'assistant', 'content': (raw or '')[:800]},
+                {'role': 'user', 'content': 'Your last reply was not valid JSON. Reply again '
+                                            'with ONLY one valid JSON object and no other text.'},
+            ]
+            return self._parse_plan(provider.chat(system_prompt, retry, json_mode=True))
+
+    @staticmethod
+    def _parse_plan(raw):
+        """Parse the plan, tolerating code fences and text around the JSON."""
+        clean = (raw or '').strip()
+        clean = re.sub(r'^```(?:json)?', '', clean).strip()
+        clean = re.sub(r'```$', '', clean).strip()
+        try:
+            return json.loads(clean)
+        except json.JSONDecodeError:
+            m = re.search(r'\{.*\}', clean, re.S)
+            if m:
+                return json.loads(m.group(0))
+            raise
 
     # ── Query Executor ────────────────────────
 

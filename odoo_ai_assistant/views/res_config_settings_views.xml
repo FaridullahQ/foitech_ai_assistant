@@ -18,7 +18,7 @@
                             <div class="o_setting_right_pane">
                                 <span class="o_form_label">AI Provider</span>
                                 <div class="text-muted">
-                                    Groq is recommended — it is completely free with no credit card required.
+                                    Use a local model to keep data on your own server, or an online provider through its API key.
                                 </div>
                                 <div class="content-group mt8">
                                     <field name="odoo_ai_provider" widget="radio"/>
@@ -118,6 +118,70 @@
                                         <label for="odoo_ai_gemini_model" class="col-lg-4 o_light_label"/>
                                         <field name="odoo_ai_gemini_model" class="col-lg-8"/>
                                     </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Local model settings -->
+                    <div class="row mt16 o_settings_container" invisible="odoo_ai_provider != 'local'">
+                        <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_left_pane"/>
+                            <div class="o_setting_right_pane">
+                                <span class="o_form_label">Local Model Configuration</span>
+                                <div class="text-muted">
+                                    Runs on your own server, so your data never leaves your network.
+                                    Install Ollama, pull a model, then enter its name below.
+                                </div>
+                                <div class="content-group mt8">
+                                    <div class="row">
+                                        <label for="odoo_ai_local_type" class="col-lg-4 o_light_label"/>
+                                        <field name="odoo_ai_local_type" class="col-lg-8"/>
+                                    </div>
+                                    <div class="row mt4">
+                                        <label for="odoo_ai_local_url" class="col-lg-4 o_light_label"/>
+                                        <field name="odoo_ai_local_url" class="col-lg-8"
+                                               placeholder="http://localhost:11434"/>
+                                    </div>
+                                    <div class="row mt4">
+                                        <label for="odoo_ai_local_model" class="col-lg-4 o_light_label"/>
+                                        <field name="odoo_ai_local_model" class="col-lg-8"
+                                               placeholder="e.g. qwen2.5:14b"/>
+                                    </div>
+                                    <div class="row mt4">
+                                        <label for="odoo_ai_local_api_key" class="col-lg-4 o_light_label"/>
+                                        <field name="odoo_ai_local_api_key" password="True" class="col-lg-8"/>
+                                    </div>
+                                    <div class="row mt4">
+                                        <label for="odoo_ai_local_ctx" class="col-lg-4 o_light_label"/>
+                                        <field name="odoo_ai_local_ctx" class="col-lg-8"/>
+                                    </div>
+                                    <div class="row mt4">
+                                        <label for="odoo_ai_local_timeout" class="col-lg-4 o_light_label"/>
+                                        <field name="odoo_ai_local_timeout" class="col-lg-8"/>
+                                    </div>
+                                    <div class="mt8">
+                                        <button name="action_odoo_ai_test_local" type="object"
+                                                string="Test connection" class="btn btn-secondary"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- About -->
+                    <div class="row mt16 o_settings_container">
+                        <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_left_pane"/>
+                            <div class="o_setting_right_pane">
+                                <span class="o_form_label">About</span>
+                                <div class="text-muted">
+                                    Odoo AI Assistant · Developed by <strong>Faridullah Qaderi</strong>
+                                    (<a href="mailto:Faridullahqaderi54@gmail.com">Faridullahqaderi54@gmail.com</a>)
+                                    · Powered by <strong>FOITECH-Digital Solutions</strong>
+                                    <br/>
+                                    Contact / WhatsApp: <a href="tel:+93788707479">(+93) 788 70 74 79</a>
+                                    · <a href="https://wa.me/93788707479" target="_blank">Chat on WhatsApp</a>
                                 </div>
                             </div>
                         </div>

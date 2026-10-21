@@ -1,0 +1,362 @@
+<section class="aia">
+<style>
+.aia{--p:#6b46c1;--pd:#1e1147;--pm:#8b5cf6;--c:#22d3ee;--soft:#f6f3fc;--line:#e6e0f3;--tx:#1f2430;--mu:#5b6275;font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;color:var(--tx);line-height:1.6;max-width:1120px;margin:0 auto;padding:0 12px 24px;box-sizing:border-box}
+.aia *,.aia *::before,.aia *::after{box-sizing:border-box}
+.aia h2{font-size:28px;line-height:1.2;margin:0 0 8px;color:var(--pd);font-weight:800;letter-spacing:-.01em}
+.aia h3{font-size:18px;margin:0 0 6px;color:var(--pd);font-weight:700}
+.aia p{margin:0 0 12px}
+.aia a{color:var(--p);text-decoration:none}.aia a:hover{text-decoration:underline}
+.aia .sec{margin:56px 0 0}.aia .lead{color:var(--mu);font-size:16px;max-width:760px;margin:0 0 24px}
+.aia .eyebrow{display:inline-block;font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--p);margin-bottom:6px}
+
+.aia .hero{position:relative;overflow:hidden;border-radius:22px;padding:44px 40px;color:#fff;background:radial-gradient(900px 400px at 100% 0%,rgba(34,211,238,.35),transparent 60%),radial-gradient(700px 400px at 0% 100%,rgba(139,92,246,.55),transparent 60%),linear-gradient(135deg,#2a1668,#1e1147 55%,#13092e);display:flex;gap:32px;align-items:center;flex-wrap:wrap}
+.aia .hero img.ic{width:128px;height:128px;border-radius:28px;box-shadow:0 14px 40px rgba(0,0,0,.45),0 0 0 1px rgba(255,255,255,.18)}
+.aia .hero .ht{flex:1;min-width:280px}
+.aia .hero h1{margin:0 0 10px;font-size:40px;line-height:1.1;font-weight:800;color:#fff;letter-spacing:-.02em}
+.aia .hero h1 span{background:linear-gradient(90deg,#c4b5fd,#67e8f9);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:#c4b5fd}
+.aia .hero p{color:rgba(255,255,255,.86);font-size:17px;max-width:640px;margin:0 0 18px}
+.aia .badges{display:flex;flex-wrap:wrap;gap:8px}
+.aia .badge{font-size:12.5px;font-weight:600;padding:5px 12px;border-radius:99px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);color:#fff}
+.aia .badge.hl{background:#fff;color:var(--pd);border-color:#fff}
+
+.aia .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:-26px 24px 0;position:relative}
+.aia .stat{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px 18px;box-shadow:0 10px 30px rgba(30,17,71,.10);text-align:center}
+.aia .stat b{display:block;font-size:22px;color:var(--p);line-height:1.2}.aia .stat span{font-size:13px;color:var(--mu)}
+
+.aia .frame{border-radius:16px;overflow:hidden;border:1px solid var(--line);box-shadow:0 18px 50px rgba(30,17,71,.16);background:#fff}
+.aia .frame .bar{height:30px;background:#f1eefb;display:flex;align-items:center;gap:6px;padding:0 12px;border-bottom:1px solid var(--line)}
+.aia .frame .bar i{width:10px;height:10px;border-radius:50%;background:#d6cdee;display:block}
+.aia .frame img{display:block;width:100%;height:auto}
+
+.aia .grid{display:grid;gap:16px}.aia .g3{grid-template-columns:repeat(3,1fr)}.aia .g2{grid-template-columns:repeat(2,1fr)}
+.aia .card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px;transition:transform .2s,box-shadow .2s,border-color .2s}
+.aia .card:hover{transform:translateY(-3px);box-shadow:0 14px 34px rgba(107,70,193,.14);border-color:#cdbff0}
+.aia .ico{width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,var(--p),var(--pm));color:#fff;display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:12px;box-shadow:0 6px 16px rgba(107,70,193,.35)}
+.aia .card p{margin:0;color:var(--mu);font-size:14.5px}
+
+.aia .steps{counter-reset:s;display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.aia .step{counter-increment:s;background:var(--soft);border-radius:16px;padding:22px 20px 20px;position:relative}
+.aia .step::before{content:counter(s);position:absolute;top:-14px;left:18px;width:32px;height:32px;border-radius:50%;background:var(--p);color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 14px rgba(107,70,193,.4)}
+.aia .step p{margin:0;color:var(--mu);font-size:14.5px}
+.aia .ex{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.aia .ex span{background:#fff;border:1px solid var(--line);border-radius:99px;padding:6px 14px;font-size:13.5px;color:var(--pd)}
+
+.aia figure{margin:0}.aia figcaption{font-size:14px;color:var(--mu);margin-top:10px}.aia figcaption b{color:var(--pd)}
+.aia .shots{display:grid;grid-template-columns:repeat(2,1fr);gap:24px}
+.aia .shots .tall{display:flex;gap:24px;align-items:flex-start}
+.aia .shots .tall img{max-width:230px;width:100%;border-radius:14px;border:1px solid var(--line);box-shadow:0 12px 34px rgba(30,17,71,.16)}
+
+.aia table{width:100%;border-collapse:separate;border-spacing:0;border:1px solid var(--line);border-radius:14px;overflow:hidden;font-size:14.5px;background:#fff}
+.aia th{background:var(--pd);color:#fff;text-align:left;padding:11px 14px;font-weight:600}
+.aia td{padding:11px 14px;border-top:1px solid var(--line);vertical-align:top}
+.aia tr:nth-child(even) td{background:#fbfaff}
+.aia .tw{overflow-x:auto}
+
+.aia details{background:#fff;border:1px solid var(--line);border-radius:14px;margin:0 0 12px;overflow:hidden}
+.aia summary{cursor:pointer;list-style:none;padding:16px 20px;font-weight:700;color:var(--pd);display:flex;align-items:center;gap:12px;font-size:16.5px}
+.aia summary::-webkit-details-marker{display:none}
+.aia summary::after{content:"+";margin-left:auto;width:26px;height:26px;border-radius:50%;background:var(--soft);color:var(--p);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700}
+.aia details[open] summary::after{content:"\2212"}
+.aia details[open] summary{border-bottom:1px solid var(--line);background:var(--soft)}
+.aia .dbody{padding:18px 22px 8px}
+.aia .tag{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:3px 9px;border-radius:99px;background:#e9fbf3;color:#0b7a4b}
+.aia .tag.cl{background:#eef2ff;color:#3730a3}
+.aia ol.n{counter-reset:n;list-style:none;padding:0;margin:0 0 14px}
+.aia ol.n>li{counter-increment:n;position:relative;padding:0 0 12px 40px}
+.aia ol.n>li::before{content:counter(n);position:absolute;left:0;top:0;width:26px;height:26px;border-radius:50%;background:var(--soft);border:1px solid var(--line);color:var(--p);font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center}
+.aia code{background:#f1eefb;color:#4c2a9a;padding:1px 6px;border-radius:6px;font-size:.92em;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.aia pre{background:#161033;color:#e9e5ff;border-radius:12px;padding:14px 16px;overflow-x:auto;font-size:13.5px;line-height:1.55;margin:8px 0 14px}
+.aia pre code{background:none;color:inherit;padding:0}
+.aia .note{border-left:4px solid var(--c);background:#effcff;border-radius:0 12px 12px 0;padding:12px 16px;margin:10px 0 14px;font-size:14.5px}
+.aia .warn{border-left-color:#f59e0b;background:#fff8eb}
+.aia ul.ck{list-style:none;margin:0;padding:0}.aia ul.ck li{padding:0 0 8px 26px;position:relative;font-size:15px}
+.aia ul.ck li::before{content:"\2713";position:absolute;left:0;top:0;color:#0b7a4b;font-weight:800}
+
+.aia .cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:6px}
+.aia .btn{display:inline-flex;align-items:center;gap:8px;padding:11px 20px;border-radius:99px;font-weight:700;font-size:14.5px;border:1px solid var(--p);color:var(--p);background:#fff}
+.aia .btn.pr{background:linear-gradient(135deg,var(--p),var(--pm));color:#fff;border-color:transparent;box-shadow:0 10px 24px rgba(107,70,193,.35)}
+.aia .btn:hover{text-decoration:none;transform:translateY(-1px)}
+.aia .contact{border-radius:22px;padding:34px 36px;color:#fff;background:radial-gradient(600px 300px at 100% 0%,rgba(34,211,238,.3),transparent 60%),linear-gradient(135deg,#2a1668,#1e1147)}
+.aia .contact h2{color:#fff}.aia .contact p{color:rgba(255,255,255,.85)}
+.aia .contact .btn{background:rgba(255,255,255,.12);color:#fff;border-color:rgba(255,255,255,.35)}
+.aia .contact .btn.pr{background:#fff;color:var(--pd);border-color:#fff}
+.aia .foot{text-align:center;color:var(--mu);font-size:13.5px;margin-top:26px}
+
+@media (max-width:860px){
+.aia .g3,.aia .steps{grid-template-columns:repeat(2,1fr)}.aia .stats{grid-template-columns:repeat(2,1fr);margin:-20px 8px 0}
+.aia .shots{grid-template-columns:1fr}.aia .hero{padding:30px 22px}.aia .hero h1{font-size:32px}
+}
+@media (max-width:560px){
+.aia .g3,.aia .g2,.aia .steps{grid-template-columns:1fr}.aia h2{font-size:23px}.aia .shots .tall{flex-direction:column}
+}
+@media (prefers-reduced-motion:reduce){.aia .card,.aia .btn{transition:none}}
+</style>
+
+<!-- HERO -->
+<div class="hero">
+  <img class="ic" src="icon.png" alt="AI Assistant for Odoo icon"/>
+  <div class="ht">
+    <h1>Ask your Odoo data <span>anything.</span></h1>
+    <p>A floating AI chat inside Odoo that turns plain-language questions into safe, read-only queries, then answers with text, tables, charts and CSV export. Use cloud AI, or run an open-source model on your own machine so your data never leaves your network.</p>
+    <div class="badges">
+      <span class="badge hl">Odoo 17.0</span>
+      <span class="badge">Read-only &amp; secure</span>
+      <span class="badge">OpenAI · Claude · Gemini · Groq</span>
+      <span class="badge">Local LLM · Ollama</span>
+      <span class="badge">LGPL-3</span>
+    </div>
+  </div>
+</div>
+
+<div class="stats">
+  <div class="stat"><b>5</b><span>AI provider options</span></div>
+  <div class="stat"><b>100%</b><span>Read-only queries</span></div>
+  <div class="stat"><b>Any module</b><span>every installed Odoo app</span></div>
+  <div class="stat"><b>Zero</b><span>data leaves your server with a local LLM</span></div>
+</div>
+
+<!-- UI -->
+<div class="sec">
+  <span class="eyebrow">See it in action</span>
+  <h2>A modern assistant that lives in every screen</h2>
+  <p class="lead">One round button in the corner of Odoo opens a translucent glass chat window. It adopts your Odoo theme colour and stays out of the way until you need it.</p>
+  <figure class="frame"><div class="bar"><i></i><i></i><i></i></div><img src="screenshot_01_chat_ui.png" alt="The AI Assistant chat window open over an Odoo dashboard"/></figure>
+</div>
+
+<!-- FEATURES -->
+<div class="sec">
+  <span class="eyebrow">Features</span>
+  <h2>Everything you need to talk to your data</h2>
+  <p class="lead">Built on Odoo's own ORM, so answers respect the same access rights your users already have.</p>
+  <div class="grid g3">
+    <div class="card"><div class="ico">&#128172;</div><h3>Natural-language queries</h3><p>Ask "How many confirmed sale orders this month?" The assistant plans the query, runs it and explains the result in plain words.</p></div>
+    <div class="card"><div class="ico">&#129513;</div><h3>Works with any module</h3><p>It discovers the relevant models and fields for each question, so Sales, CRM, HR, Accounting, Inventory and your custom modules all work.</p></div>
+    <div class="card"><div class="ico">&#128202;</div><h3>Charts on demand</h3><p>Bar, line and pie charts are drawn when the result suits a visual. Chart.js is bundled, so charts work even without internet access.</p></div>
+    <div class="card"><div class="ico">&#128229;</div><h3>CSV export</h3><p>Download the records behind an answer as a CSV file that opens directly in Excel or LibreOffice.</p></div>
+    <div class="card"><div class="ico">&#128221;</div><h3>Conversation history</h3><p>Every question and answer is saved per user in an AI Chat History list you can search, filter and review.</p></div>
+    <div class="card"><div class="ico">&#128273;</div><h3>Per-user module access</h3><p>Decide which modules each user's questions may touch, and mark trusted users as AI super users.</p></div>
+    <div class="card"><div class="ico">&#127760;</div><h3>Five AI options</h3><p>OpenAI, Anthropic Claude, Google Gemini, Groq, or a local model through Ollama or any OpenAI-compatible server.</p></div>
+    <div class="card"><div class="ico">&#128274;</div><h3>Private by choice</h3><p>With a local model, questions, schema and results stay on your own hardware. Ideal for finance, government and regulated data.</p></div>
+    <div class="card"><div class="ico">&#9889;</div><h3>Built to be fast</h3><p>Only the models relevant to a question are sent to the AI, which keeps prompts small and answers quick, even on small local models.</p></div>
+  </div>
+</div>
+
+<!-- HOW IT WORKS -->
+<div class="sec">
+  <span class="eyebrow">How it works</span>
+  <h2>From question to answer in three steps</h2>
+  <p class="lead">The AI never touches your database. It only writes a small JSON plan, and Odoo checks and runs that plan.</p>
+  <div class="steps">
+    <div class="step"><h3>You ask</h3><p>Type a question in the chat. Any language your chosen AI model understands will work.</p></div>
+    <div class="step"><h3>Odoo runs a safe query</h3><p>The plan is limited to <code>search_count</code>, <code>search_read</code> and <code>read_group</code>, executed as <b>you</b>, so access rights and record rules apply.</p></div>
+    <div class="step"><h3>You get the answer</h3><p>A clear reply with lists or tables, an optional chart, and a CSV download.</p></div>
+  </div>
+  <div class="ex"><span>How many customers do we have?</span><span>Count employees by department</span><span>List overdue purchase orders</span><span>How many leads are in each CRM stage?</span><span>Show a chart of planned amount per grant</span></div>
+</div>
+
+<!-- SCREENSHOTS -->
+<div class="sec">
+  <span class="eyebrow">Screenshots</span>
+  <h2>A closer look</h2>
+  <div class="shots">
+    <figure class="frame"><img src="screenshot_02_history.png" alt="AI Chat History list view next to the chat window"/><figcaption style="padding:0 14px 12px"><b>Chat history.</b> Every question and answer is stored and searchable.</figcaption></figure>
+    <figure class="frame"><img src="screenshot_04_access.png" alt="User Module Access list with an AI super user"/><figcaption style="padding:0 14px 12px"><b>Access control.</b> Limit each user to the modules they may query.</figcaption></figure>
+    <figure class="frame"><img src="screenshot_07_local_settings.png" alt="Settings screen with Local Model Configuration for Ollama"/><figcaption style="padding:0 14px 12px"><b>Local model setup.</b> Point the module at Ollama and click Test connection.</figcaption></figure>
+    <figure class="frame"><img src="screenshot_06_api_settings.png" alt="Settings screen with provider selection and API key"/><figcaption style="padding:0 14px 12px"><b>Cloud providers.</b> Pick a provider, paste its API key, save.</figcaption></figure>
+    <figure class="tall" style="grid-column:1/-1">
+      <img src="screenshot_05_answer.png" alt="Answer with a bar chart"/>
+      <img src="screenshot_03_export.png" alt="Answer with CSV export button"/>
+      <figcaption style="flex:1"><b>Answers that explain themselves.</b> Lists, tables and charts appear right in the chat, and the Export CSV button downloads the underlying rows.</figcaption>
+    </figure>
+  </div>
+</div>
+
+<!-- PROVIDERS -->
+<div class="sec">
+  <span class="eyebrow">Choose your AI</span>
+  <h2>Cloud API or your own machine</h2>
+  <p class="lead">Switch providers at any time from Settings. No code changes, and your history is kept.</p>
+  <div class="tw"><table>
+    <tr><th>Option</th><th>Best for</th><th>Cost</th><th>Data leaves your server?</th><th>Needs</th></tr>
+    <tr><td><b>Local model</b> (Ollama, LM Studio, vLLM)</td><td>Privacy, regulated data, offline use</td><td>Free (your hardware)</td><td><b>No</b></td><td>A capable PC or GPU server</td></tr>
+    <tr><td><b>Groq</b></td><td>Fast, low-cost start</td><td>Free tier with limits</td><td>Yes</td><td>API key</td></tr>
+    <tr><td><b>OpenAI</b></td><td>High quality general use</td><td>Pay per use</td><td>Yes</td><td>API key + credits</td></tr>
+    <tr><td><b>Claude</b></td><td>Careful reasoning, long answers</td><td>Pay per use</td><td>Yes</td><td>API key + credits</td></tr>
+    <tr><td><b>Gemini</b></td><td>Large free quota for testing</td><td>Free tier + paid</td><td>Yes</td><td>API key</td></tr>
+  </table></div>
+</div>
+
+<!-- GUIDES -->
+<div class="sec">
+  <span class="eyebrow">Setup guides</span>
+  <h2>Get running in minutes</h2>
+  <p class="lead">Follow the installation guide first, then configure one provider. You can add the others later.</p>
+
+  <details open><summary>1&nbsp; Installation <span class="tag">All setups</span></summary><div class="dbody">
+    <ol class="n">
+      <li>Copy the <code>odoo_ai_assistant</code> folder into your Odoo addons path, or install it from the Odoo Apps store.</li>
+      <li>Make sure the Python <code>requests</code> library is installed (it is included with most Odoo installs): <pre><code>pip install requests</code></pre></li>
+      <li>Restart Odoo, then go to <b>Apps &rarr; Update Apps List</b>, search for <b>AI Assistant for Odoo</b> and click <b>Install</b>.</li>
+      <li>Open <b>Settings</b> and scroll to <b>AI Assistant Settings</b>. Choose a provider and fill in its fields (see the guides below), then click <b>Save</b>.</li>
+      <li>Click the round button in the bottom-right corner and ask your first question.</li>
+    </ol>
+    <div class="note">Upgrading? Run <code>odoo-bin -u odoo_ai_assistant -d YOUR_DB</code> and hard-refresh the browser (Ctrl+F5) so the new interface files load.</div>
+  </div></details>
+
+  <details><summary>2&nbsp; Run a local open-source model with Ollama <span class="tag">Private</span></summary><div class="dbody">
+    <p>Run the AI on your own computer or server. Nothing is sent to the internet.</p>
+    <ol class="n">
+      <li><b>Install Ollama</b> from <a href="https://ollama.com/download" target="_blank" rel="noopener">ollama.com/download</a> (Windows, macOS or Linux). On Linux: <pre><code>curl -fsSL https://ollama.com/install.sh | sh</code></pre></li>
+      <li><b>Download a model.</b> Open a terminal and run, for example: <pre><code>ollama pull qwen2.5:14b</code></pre>
+        Rough memory needs (4-bit models, check the model page for exact figures): 7&ndash;8B models need about 6&nbsp;GB of GPU or RAM, 14B about 10&ndash;12&nbsp;GB, 30B-class about 20&nbsp;GB or more. Models of <b>14B and above</b> give much more reliable answers than small ones.</li>
+      <li><b>Check it works.</b> List your models and test the server: <pre><code>ollama list
+curl http://localhost:11434/api/tags</code></pre>
+        On Windows PowerShell use <code>curl.exe</code> or <code>Invoke-RestMethod http://localhost:11434/api/tags</code>.</li>
+      <li><b>Configure Odoo.</b> In <b>Settings &rarr; AI Assistant Settings</b> choose <b>Local model</b> and fill in: <div class="tw"><table>
+        <tr><th>Field</th><th>Value</th></tr>
+        <tr><td>Server Type</td><td>Ollama (native API)</td></tr>
+        <tr><td>Server URL</td><td><code>http://localhost:11434</code> (or <code>http://SERVER-IP:11434</code> if Ollama runs on another machine)</td></tr>
+        <tr><td>Model Name</td><td>Exactly as shown by <code>ollama list</code>, for example <code>qwen2.5:14b</code></td></tr>
+        <tr><td>API Key</td><td>Leave empty (only needed behind a reverse proxy that requires one)</td></tr>
+        <tr><td>Context Size</td><td><code>16384</code> (use <code>8192</code> if memory is tight)</td></tr>
+        <tr><td>Timeout</td><td><code>180</code> seconds (use <code>300</code> or more on CPU-only machines)</td></tr>
+      </table></div></li>
+      <li>Click <b>Test connection</b>. You should see a green message with the response time. Then click <b>Save</b>.</li>
+    </ol>
+    <h3>Ollama on a separate server</h3>
+    <ul class="ck">
+      <li>On the Ollama machine set the environment variable <code>OLLAMA_HOST=0.0.0.0:11434</code> and restart Ollama.</li>
+      <li>Open port 11434 in the firewall <b>only</b> for your Odoo server's IP address.</li>
+      <li>Never expose Ollama to the internet. Ollama has no login of its own, so for shared use put it behind a reverse proxy (nginx, Caddy) with an API key and HTTPS, and enter that key in the <b>API Key</b> field.</li>
+    </ul>
+    <h3>LM Studio, vLLM, llama.cpp and other servers</h3>
+    <p>Choose Server Type <b>OpenAI-compatible</b> and enter the server's address including <code>/v1</code>, for example <code>http://localhost:1234/v1</code> (LM Studio) or <code>http://SERVER:8000/v1</code> (vLLM). In this mode the context size is set on the server itself.</p>
+    <h3>Troubleshooting</h3>
+    <div class="tw"><table>
+      <tr><th>You see</th><th>Try</th></tr>
+      <tr><td>"Could not reach the AI server"</td><td>Is Ollama running? Check the URL and firewall. Test with the <code>curl</code> command above from the Odoo server itself.</td></tr>
+      <tr><td>"Model not found"</td><td>The name must match <code>ollama list</code> exactly (including the tag after the colon). Run <code>ollama pull</code> for it.</td></tr>
+      <tr><td>Very slow answers</td><td>Use a GPU, a smaller model, or a lower context size. The first request is slower because the model loads into memory.</td></tr>
+      <tr><td>"Took too long to answer"</td><td>Increase the Timeout. If Odoo runs with workers, also raise <code>limit_time_real</code> in <code>odoo.conf</code>.</td></tr>
+      <tr><td>Wrong or empty answers</td><td>Small models struggle with structured output. Try a 14B+ model, and avoid "thinking" model variants for speed.</td></tr>
+    </table></div>
+  </div></details>
+
+  <details><summary>3&nbsp; Groq <span class="tag cl">Free tier</span></summary><div class="dbody">
+    <ol class="n">
+      <li>Create an account at <a href="https://console.groq.com" target="_blank" rel="noopener">console.groq.com</a>.</li>
+      <li>Open <b>API Keys</b>, click <b>Create API Key</b> and copy the key (it starts with <code>gsk_</code>). You will only see it once.</li>
+      <li>In Odoo <b>Settings &rarr; AI Assistant Settings</b>, choose <b>Groq</b>, paste the key and pick a model.</li>
+      <li>Click <b>Save</b>.</li>
+    </ol>
+    <div class="note">Groq's free tier has rate limits, and the models available depend on your account. If the selected model is not available to your key, the assistant automatically switches to one that is.</div>
+  </div></details>
+
+  <details><summary>4&nbsp; OpenAI (ChatGPT) <span class="tag cl">API key</span></summary><div class="dbody">
+    <ol class="n">
+      <li>Sign in at <a href="https://platform.openai.com" target="_blank" rel="noopener">platform.openai.com</a> and add billing credits (the API is billed separately from ChatGPT subscriptions).</li>
+      <li>Open <b>API keys</b>, create a secret key and copy it (starts with <code>sk-</code>).</li>
+      <li>In Odoo choose <b>OpenAI</b>, paste the key, and type a <b>Model</b> id, for example <code>gpt-5-mini</code>. Any chat model id from OpenAI's models page works.</li>
+      <li>Click <b>Save</b>.</li>
+    </ol>
+  </div></details>
+
+  <details><summary>5&nbsp; Claude (Anthropic) <span class="tag cl">API key</span></summary><div class="dbody">
+    <ol class="n">
+      <li>Sign in at <a href="https://console.anthropic.com" target="_blank" rel="noopener">console.anthropic.com</a> and add credits.</li>
+      <li>Open <b>API Keys</b>, create a key and copy it (starts with <code>sk-ant-</code>).</li>
+      <li>In Odoo choose <b>Claude</b>, paste the key, and enter a <b>Model</b> id, for example <code>claude-sonnet-5-5</code>.</li>
+      <li>Click <b>Save</b>.</li>
+    </ol>
+  </div></details>
+
+  <details><summary>6&nbsp; Google Gemini <span class="tag cl">API key</span></summary><div class="dbody">
+    <ol class="n">
+      <li>Open <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">Google AI Studio</a> and create an API key (starts with <code>AIza</code>).</li>
+      <li>In Odoo choose <b>Google Gemini</b>, paste the key, and enter a <b>Model</b> id, for example <code>gemini-flash-latest</code>.</li>
+      <li>Click <b>Save</b>.</li>
+    </ol>
+  </div></details>
+
+  <div class="note warn"><b>Model names change often.</b> Providers retire and add models regularly, so the model field for OpenAI, Claude and Gemini is free text. If you see a "model not available" message, copy a current model id from the provider's documentation.</div>
+
+  <details><summary>7&nbsp; Control who can ask what <span class="tag">Security</span></summary><div class="dbody">
+    <p>Open <b>AI Assistant &rarr; User Module Access</b> and click <b>New</b>. Choose the user, pick the <b>Allowed Modules</b>, or switch on <b>AI Super User</b>. The assistant applies these rules in order:</p>
+    <div class="tw"><table>
+      <tr><th>User</th><th>What the assistant can query</th></tr>
+      <tr><td>Odoo administrator</td><td>Everything</td></tr>
+      <tr><td>AI Super User</td><td>Everything</td></tr>
+      <tr><td>No rule defined</td><td>Everything the user can already access (open by default)</td></tr>
+      <tr><td>Rule with modules</td><td>Only those modules</td></tr>
+      <tr><td>Rule with no modules</td><td>Nothing (fully blocked)</td></tr>
+    </table></div>
+    <div class="note">Because users without a rule are unrestricted, create a rule for every user whose access you want to limit.</div>
+  </div></details>
+</div>
+
+<!-- SECURITY -->
+<div class="sec">
+  <span class="eyebrow">Security &amp; privacy</span>
+  <h2>Designed to be safe with business data</h2>
+  <div class="grid g2">
+    <div class="card"><h3>Strictly read-only</h3><p>Only <code>search_count</code>, <code>search_read</code> and <code>read_group</code> are allowed. The assistant cannot create, edit or delete records, and plans are parsed as data, never executed as code.</p></div>
+    <div class="card"><h3>Runs as the logged-in user</h3><p>Queries use the user's own access rights and record rules, so nobody sees data they could not already open in Odoo.</p></div>
+    <div class="card"><h3>Clear data flow</h3><p>With a cloud provider, the AI receives the question, the names and labels of the few relevant models and fields, and up to 50 result rows used to write the answer. With a local model, none of it leaves your network.</p></div>
+    <div class="card"><h3>Keys and output handled carefully</h3><p>API keys are stored in Odoo system parameters, visible to administrators only, and Gemini keys are sent in a header rather than in the URL. Answers are HTML-escaped before display.</p></div>
+  </div>
+</div>
+
+<!-- REQUIREMENTS -->
+<div class="sec">
+  <span class="eyebrow">Requirements</span>
+  <h2>Compatibility</h2>
+  <div class="tw"><table>
+    <tr><th>Item</th><th>Details</th></tr>
+    <tr><td>Odoo version</td><td>17.0, built on standard Odoo and OWL APIs</td></tr>
+    <tr><td>Odoo dependencies</td><td><code>base</code>, <code>web</code>, <code>mail</code></td></tr>
+    <tr><td>Python library</td><td><code>requests</code></td></tr>
+    <tr><td>Internet</td><td>Only for cloud providers. Local models and charts work offline.</td></tr>
+    <tr><td>License</td><td>LGPL-3</td></tr>
+  </table></div>
+</div>
+
+<!-- FAQ -->
+<div class="sec">
+  <span class="eyebrow">FAQ</span>
+  <h2>Common questions</h2>
+  <details><summary>Can the assistant change or delete my data?</summary><div class="dbody"><p>No. It is limited to read-only queries, and every query runs with the asking user's own permissions.</p></div></details>
+  <details><summary>Is my whole database sent to the AI?</summary><div class="dbody"><p>No. Only the models relevant to the question are described to the AI, plus the few result rows needed to phrase the answer. With a local model nothing leaves your server.</p></div></details>
+  <details><summary>Which languages can I ask in?</summary><div class="dbody"><p>The assistant follows the language abilities of the model you choose. Large cloud models handle many languages well. Small local models are usually strongest in English, so test with your own language before rolling out.</p></div></details>
+  <details><summary>How much do the AI providers cost?</summary><div class="dbody"><p>This module is free under LGPL-3. Groq and Gemini offer free tiers with limits. OpenAI and Claude bill per use. A local model costs only your own hardware.</p></div></details>
+  <details><summary>Does it need a powerful computer for local models?</summary><div class="dbody"><p>A GPU makes local models fast. CPU-only machines work but answers can take a minute or more. See the Ollama guide above for memory estimates.</p></div></details>
+</div>
+
+<!-- CHANGELOG -->
+<div class="sec">
+  <span class="eyebrow">What's new</span>
+  <h2>Release notes</h2>
+  <div class="tw"><table>
+    <tr><th>Version</th><th>Changes</th></tr>
+    <tr><td>17.0.1.0.4</td><td>Chart.js bundled (charts work offline). Model names for OpenAI, Claude and Gemini are now editable. Support for current OpenAI reasoning models. Gemini API key moved from the URL to a header. Built-in setup guides.</td></tr>
+    <tr><td>17.0.1.0.3</td><td>Local model support (Ollama and OpenAI-compatible servers) with Test connection.</td></tr>
+    <tr><td>17.0.1.0.2</td><td>New translucent glass interface, About panel, answer formatting with lists and tables.</td></tr>
+    <tr><td>17.0.1.0.0</td><td>First release: natural-language queries, charts, CSV export, history and per-user module access.</td></tr>
+  </table></div>
+</div>
+
+<!-- CONTACT -->
+<div class="sec">
+  <div class="contact">
+    <span class="eyebrow" style="color:#67e8f9">Support</span>
+    <h2>Need help or a custom version?</h2>
+    <p>Developed by <b>Faridullah Qaderi</b>, FOITECH-Digital Solutions. Questions, bug reports, training and custom integrations are welcome.</p>
+    <div class="cta">
+      <a class="btn pr" href="mailto:Faridullahqaderi54@gmail.com">&#9993; Faridullahqaderi54@gmail.com</a>
+      <a class="btn" href="https://wa.me/93788707479" target="_blank" rel="noopener">WhatsApp (+93) 788 70 74 79</a>
+      <a class="btn" href="https://www.foitech.com" target="_blank" rel="noopener">www.foitech.com</a>
+    </div>
+  </div>
+  <p class="foot">Powered by <b>FOITECH-Digital Solutions</b> &middot; Innovative Solutions for a Smarter Tomorrow</p>
+</div>
+
+</section>
