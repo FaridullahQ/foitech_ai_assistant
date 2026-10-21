@@ -39,9 +39,9 @@ Contact / WhatsApp: (+93) 788 70 74 79
     ],
     'assets': {
         'web.assets_backend': [
-            'odoo_ai_assistant/static/src/css/ai_assistant.css',
-            'odoo_ai_assistant/static/src/js/ai_assistant.js',
-            'odoo_ai_assistant/static/src/xml/ai_assistant.xml',
+            'foitech_ai_assistant/static/src/css/ai_assistant.css',
+            'foitech_ai_assistant/static/src/js/ai_assistant.js',
+            'foitech_ai_assistant/static/src/xml/ai_assistant.xml',
         ],
     },
     'images': ['static/description/banner.png'],

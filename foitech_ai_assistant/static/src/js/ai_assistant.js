@@ -92,7 +92,7 @@ async function loadChartJs() {
     if (chartJsLoaded || window.Chart) { chartJsLoaded = true; return; }
     await new Promise((resolve, reject) => {
         const s = document.createElement('script');
-        s.src = '/odoo_ai_assistant/static/lib/chartjs/chart.umd.js';
+        s.src = '/foitech_ai_assistant/static/lib/chartjs/chart.umd.js';
         s.onload = resolve; s.onerror = reject;
         document.head.appendChild(s);
     });
@@ -125,7 +125,7 @@ const SUGGESTIONS = [
 
 // ─── Main Component ─────────────────────────────────────────────────────────
 export class AIAssistant extends Component {
-    static template = "odoo_ai_assistant.AIAssistant";
+    static template = "foitech_ai_assistant.AIAssistant";
 
     setup() {
         this.rpc = useService("rpc");
@@ -374,10 +374,10 @@ export class AIAssistant extends Component {
     get about() { return MODULE_INFO; }
 }
 
-AIAssistant.template = "odoo_ai_assistant.AIAssistant";
+AIAssistant.template = "foitech_ai_assistant.AIAssistant";
 
 // Register as a systray service / action
-registry.category("systray").add("odoo_ai_assistant", {
+registry.category("systray").add("foitech_ai_assistant", {
     Component: AIAssistant,
     sequence: 1,
 });

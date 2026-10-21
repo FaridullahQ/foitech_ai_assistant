@@ -7,7 +7,7 @@
         <field name="arch" type="xml">
             <xpath expr="//app[@name='general_settings']" position="before">
                 <div class="app_settings_block" data-string="AI Assistant"
-                     string="AI Assistant" data-key="odoo_ai_assistant">
+                     string="AI Assistant" data-key="foitech_ai_assistant">
 
                     <h2>AI Assistant Settings</h2>
 

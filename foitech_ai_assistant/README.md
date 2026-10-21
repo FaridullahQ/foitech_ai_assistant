@@ -20,13 +20,13 @@ machine so your data never leaves your network.
 
 ## Installation
 
-1. Copy `odoo_ai_assistant` into your addons path.
+1. Copy `foitech_ai_assistant` into your addons path.
 2. `pip install requests` (usually already present).
 3. Restart Odoo, then **Apps > Update Apps List**, search **AI Assistant for Odoo**, **Install**.
 4. **Settings > AI Assistant Settings**: choose a provider, fill in its fields, **Save**.
 5. Click the round button at the bottom-right and ask a question.
 
-Upgrade: `odoo-bin -u odoo_ai_assistant -d YOUR_DB`, then hard-refresh the browser (Ctrl+F5).
+Upgrade: `odoo-bin -u foitech_ai_assistant -d YOUR_DB`, then hard-refresh the browser (Ctrl+F5).
 
 ## Local model with Ollama
 
